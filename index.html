@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Imports - Catálogo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .product-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #2a2a2a;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #404040;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: #e8e8e8;
+            cursor: pointer;
+            overflow: hidden;
+            border-bottom: 1px solid #d0d0d0;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+            padding: 20px;
+        }
+
+        .product-image-container:hover .product-image {
+            transform: scale(1.08);
+        }
+
+        .product-info {
+            padding: 24px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .product-price {
+            font-size: 28px;
+            color: #e0e0e0;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: #ffffff;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .whatsapp-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+        }
+
+        .whatsapp-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Modal para ampliar imagem */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95%;
+            max-height: 95vh;
+            animation: zoomIn 0.3s;
+        }
+
+        @keyframes zoomIn {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .modal-content img {
+            width: auto;
+            height: auto;
+            max-width: 95vw;
+            max-height: 95vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 36px;
+            font-weight: 300;
+            cursor: pointer;
+            z-index: 1001;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .product-image-container {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="imagem/logo.png" alt="Central Imports" class="logo">
+            <h1>Catálogo de Perfumes</h1>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+    </div>
+
+    <!-- Modal para ampliar imagem -->
+    <div id="imageModal" class="modal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        const produtos = [
+            { nome: "Durrat", preco: "155,00", imagem: "Durrat.png" },
+            { nome: "Sabah", preco: "155,00", imagem: "Sabah.png" },
+            { nome: "Fakhor Rose", preco: "220,00", imagem: "Fakhor rose.png" },
+            { nome: "Yara Rosa", preco: "280,00", imagem: "Yara rosa.png" },
+            { nome: "Milena", preco: "235,00", imagem: "Milena.png" },
+            { nome: "Eclaire", preco: "280,00", imagem: "Eclaire.png" },
+            { nome: "Yara Moi", preco: "235,00", imagem: "Yara moi.png" },
+            { nome: "Asad Preta", preco: "270,00", imagem: "Asad preta.png" },
+            { nome: "Club de Nuit Intense", preco: "270,00", imagem: "Club de nuit intense.png" },
+            { nome: "Baree Q Al Drohab", preco: "170,00", imagem: "Baree q al drohab.png" }
+        ];
+
+        const grid = document.getElementById('productGrid');
+        const whatsappNumber = '5511937164511';
+
+        // Ícone do WhatsApp em SVG
+        const whatsappIcon = `<svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>`;
+
+        produtos.forEach(produto => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            const mensagem = `Olá! Gostaria de comprar o perfume *${produto.nome}* no valor de R$ ${produto.preco}`;
+            const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`;
+            
+            card.innerHTML = `
+                <div class="product-image-container" onclick="openModal('imagem/${produto.imagem}')">
+                    <img src="imagem/${produto.imagem}" alt="${produto.nome}" class="product-image">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${produto.nome}</div>
+                    <div class="product-price">R$ ${produto.preco}</div>
+                    <a href="${whatsappLink}" class="whatsapp-btn" target="_blank">
+                        ${whatsappIcon}
+                        <span>Comprar via WhatsApp</span>
+                    </a>
+                </div>
+            `;
+            
+            grid.appendChild(card);
+        });
+
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Fechar modal clicando fora da imagem
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
